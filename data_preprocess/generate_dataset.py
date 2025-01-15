@@ -11,7 +11,6 @@ from tqdm import tqdm
 
 BASE_DIR = osp.dirname(osp.dirname(osp.abspath(__file__)))
 sys.path.append(BASE_DIR)
-print(f"Base directory: {BASE_DIR}")
 
 train_images_path = osp.join("dataset", "train2014")
 val_images_path = osp.join("dataset", "val2014")
