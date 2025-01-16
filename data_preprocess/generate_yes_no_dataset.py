@@ -23,7 +23,7 @@ train_questions_path = osp.join("dataset", "v2_Questions_Train_mscoco", "v2_Open
 val_questions_path = osp.join("dataset", "v2_Questions_Val_mscoco", "v2_OpenEnded_mscoco_val2014_questions.json")
 test_questions_path = osp.join("dataset", "v2_Questions_Test_mscoco", "v2_OpenEnded_mscoco_test2015_questions.json")
 
-output_folder = osp.join("dataset", "generated")
+output_folder = osp.join("dataset", "generated_yes_no")
 
 generated_train_dataset_path = osp.join(output_folder, "train_dataset.json")
 generated_val_dataset_path = osp.join(output_folder, "val_dataset.json")
@@ -120,23 +120,13 @@ def generate_dataset(images_folder: str, annotations_path: str | None, questions
 
         for annot in tqdm(annotations, desc="Processing annotations", ncols=100, ascii=True):
             for answer in annot["answers"]:
-                # dataset.append({
-                #     "image_id": image_id,
-                #     "image_path": images[str(image_id)],
-                #     "question_id": question_id,
-                #     "question_type": question_type,
-                #     "question": questions[str(question_id)],
-                #     "multiple_choice_answer": multiple_choice_answer,
-                #     "answer": answer["answer"],
-                #     "answer_confidence": answer["answer_confidence"],
-                #     "answer_id": answer["answer_id"]
-                # })
-                dataset.append({
-                    "id": annot["question_id"],
-                    "image_path": images[str(annot["image_id"])],
-                    "question": questions[str(annot["question_id"])],
-                    "answer": answer["answer"],
-                })
+                if answer["answer"].lower() in ["yes", "no"]: 
+                    dataset.append({
+                        "id": annot["question_id"],
+                        "image_path": images[str(annot["image_id"])],
+                        "question": questions[str(annot["question_id"])],
+                        "answer": answer["answer"],
+                    })
     else:
         for question_id, question_text in questions.items():
             dataset.append({
