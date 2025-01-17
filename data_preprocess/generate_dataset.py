@@ -140,7 +140,7 @@ def generate_dataset(images_folder: str, annotations_path: str | None, questions
     else:
         for question_id, question_text in questions.items():
             dataset.append({
-                "id": question_id,
+                "id": int(question_id),
                 "image_path": images[str(question_image[question_id])],
                 "question": question_text,
                 "answer": "",
