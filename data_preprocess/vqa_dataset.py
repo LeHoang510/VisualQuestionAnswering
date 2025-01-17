@@ -1,10 +1,11 @@
 from torch.utils.data import Dataset, DataLoader
 from PIL import Image
 import torch
+import torchvision.transforms as transforms
 
 from data_preprocess.utils import *
 
-def VQADataset(Dataset):
+class VQADataset(Dataset):
     def __init__(self, data, max_seq_len=20, transform=None):
         self.transform = transform
         self.data = data
@@ -31,3 +32,22 @@ def VQADataset(Dataset):
         label = self.label2idx[label]
 
         return img, question, label
+
+class VQATransform():
+    def get_transform(self, type):
+        if type == "train":
+            return transforms.Compose([
+                transforms.Resize((224, 224)),
+                transforms.CenterCrop(180),
+                transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1),
+                transforms.RandomHorizontalFlip(),
+                transforms.GaussianBlur(3),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            ])
+        if type == "val":
+            return transforms.Compose([
+                transforms.Resize((224, 224)),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            ])

@@ -6,6 +6,7 @@ sys.path.append(BASE_DIR)
 
 import spacy
 import torchtext
+torchtext.disable_torchtext_deprecation_warning()
 from torchtext.vocab import build_vocab_from_iterator
 from torchtext.data.utils import get_tokenizer
 
@@ -33,7 +34,7 @@ def build_vocab(dataset):
 
 def tokenize(question, max_seq_len, vocab):
     tokens = [token.text for token in eng.tokenizer(question)]
-    sequence = [vocab[tokens] for token in tokens]
+    sequence = [vocab[token] for token in tokens]
     if len(sequence) < max_seq_len:
         sequence += [vocab["pad"]] * (max_seq_len - len(sequence))
     else:
