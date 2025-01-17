@@ -30,3 +30,12 @@ def build_vocab(dataset):
         special_first=True,
     )
     vocab.set_default_index(vocab["unk"])
+
+def tokenize(question, max_seq_len, vocab):
+    tokens = [token.text for token in eng.tokenizer(question)]
+    sequence = [vocab[tokens] for token in tokens]
+    if len(sequence) < max_seq_len:
+        sequence += [vocab["pad"]] * (max_seq_len - len(sequence))
+    else:
+        sequence = sequence[:max_seq_len]
+    return sequence
