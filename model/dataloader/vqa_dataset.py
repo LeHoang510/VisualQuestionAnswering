@@ -3,7 +3,7 @@ from PIL import Image
 import torch
 import torchvision.transforms as transforms
 
-from data_preprocess.utils import *
+from model.utils import *
 
 class VQADataset(Dataset):
     def __init__(self, data, vocab, mapping, max_seq_len=20, transform=None):
@@ -29,7 +29,7 @@ class VQADataset(Dataset):
         question = torch.tensor(question, dtype=torch.long)
 
         label = self.label2idx[self.data[index]["answer"]]
-        label = self.label2idx[label]
+        label = torch.tensor(label, dtype=torch.long)
 
         return img, question, label
 

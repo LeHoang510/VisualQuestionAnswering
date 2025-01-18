@@ -1,8 +1,8 @@
 import os.path as osp
 import json
 
-from data_preprocess.utils import *
-from data_preprocess.vqa_dataset import VQADataset, VQATransform
+from model.utils import *
+from model.dataloader.vqa_dataset import VQADataset, VQATransform
 
 if __name__ == "__main__":
     with open(osp.join("dataset", "generated_yes_no", "train_dataset.json"), "r") as f:

@@ -19,14 +19,14 @@ def mapping_classes(dataset):
     return label2idx, idx2label
 
 def get_tokens(samples):
+    # Split the question into tokens by using spacy tokenizer
     for sample in samples:
         question = sample["question"]
-        print("-------------------")
-        print(question)
-        print([token.text for token in eng.tokenizer(question)])
         yield [token.text for token in eng.tokenizer(question)]
 
 def build_vocab(dataset):
+    # Build the vocabulary from tokens that appear at least 2 times
+    # and add special tokens (add them at the beginning)
     vocab = build_vocab_from_iterator(
         get_tokens(dataset),
         min_freq=2,
@@ -37,6 +37,8 @@ def build_vocab(dataset):
     return vocab
 
 def tokenize(question, max_seq_len, vocab):
+    # Tokenize the question and map the tokens to their indices
+    # output ex with padding: [10, 7, 15, 2, 20, 25, 30, 0, 0, 0, 0]
     tokens = [token.text for token in eng.tokenizer(question)]
     sequence = [vocab[token] for token in tokens]
     if len(sequence) < max_seq_len:

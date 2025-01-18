@@ -1,0 +1,37 @@
+paths:
+  train_images:
+    - "dataset"
+    - "train2014"
+  
+  val_images:
+    - "dataset"
+    - "val2014"
+  
+  test_images:
+    - "dataset"
+    - "test2015"
+
+  train_annotations:
+    - "dataset"
+    - "v2_Annotations_Train_mscoco"
+    - "v2_mscoco_train2014_annotations.json"
+  
+  val_annotations:
+    - "dataset"
+    - "v2_Annotations_Val_mscoco"
+    - "v2_mscoco_val2014_annotations.json"
+
+  train_questions:
+    - "dataset"
+    - "v2_Questions_Train_mscoco"
+    - "v2_OpenEnded_mscoco_train2014_questions.json"
+  
+  val_questions:
+    - "dataset"
+    - "v2_Questions_Val_mscoco"
+    - "v2_OpenEnded_mscoco_val2014_questions.json"
+  
+  test_questions:
+    - "dataset"
+    - "v2_Questions_Test_mscoco"
+    - "v2_OpenEnded_mscoco_test2015_questions.json"

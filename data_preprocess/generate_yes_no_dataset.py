@@ -9,20 +9,23 @@ from collections import Counter
 # 3rd party lib
 from tqdm import tqdm
 # user lib
-
 BASE_DIR = osp.dirname(osp.dirname(osp.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
-train_images_path = osp.join("dataset", "train2014")
-val_images_path = osp.join("dataset", "val2014")
-test_images_path = osp.join("dataset", "test2015")
+from utils.utils import load_yaml
 
-train_annotations_path = osp.join("dataset", "v2_Annotations_Train_mscoco", "v2_mscoco_train2014_annotations.json")
-val_annotations_path = osp.join("dataset", "v2_Annotations_Val_mscoco", "v2_mscoco_val2014_annotations.json")
+config = load_yaml(osp.join("utils", "dataset_config.yaml"))
 
-train_questions_path = osp.join("dataset", "v2_Questions_Train_mscoco", "v2_OpenEnded_mscoco_train2014_questions.json")
-val_questions_path = osp.join("dataset", "v2_Questions_Val_mscoco", "v2_OpenEnded_mscoco_val2014_questions.json")
-test_questions_path = osp.join("dataset", "v2_Questions_Test_mscoco", "v2_OpenEnded_mscoco_test2015_questions.json")
+train_images_path = osp.join(*config['paths']['train_images'])
+val_images_path = osp.join(*config['paths']['val_images'])
+test_images_path = osp.join(*config['paths']['test_images'])
+
+train_annotations_path = osp.join(*config['paths']['train_annotations'])
+val_annotations_path = osp.join(*config['paths']['val_annotations'])
+
+train_questions_path = osp.join(*config['paths']['train_questions'])
+val_questions_path = osp.join(*config['paths']['val_questions'])
+test_questions_path = osp.join(*config['paths']['test_questions'])
 
 output_folder = osp.join("dataset", "generated_yes_no")
 
