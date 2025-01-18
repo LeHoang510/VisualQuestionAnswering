@@ -9,7 +9,7 @@ sys.path.append(BASE_DIR)
 
 from utils.utils import set_seed, load_yaml
 from model.utils import *
-from model.dataloader.vqa_dataset import VQADataset, VQATransform
+from model.vqa_dataset import VQADataset, VQATransform
 
 if __name__ == "__main__":
     set_seed()
