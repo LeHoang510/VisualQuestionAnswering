@@ -123,13 +123,13 @@ def generate_dataset(images_folder: str, annotations_path: str | None, questions
             if annot["answer_type"] == "yes/no": 
                 answer_counts = Counter([answer["answer"] for answer in annot["answers"]])
                 majority_answer = answer_counts.most_common(1)[0][0]
-                
-                dataset.append({
-                    "id": annot["question_id"],
-                    "image_path": images[str(annot["image_id"])],
-                    "question": questions[str(annot["question_id"])],
-                    "answer": majority_answer,
-                })
+                if majority_answer in ["yes", "no"]:
+                    dataset.append({
+                        "id": annot["question_id"],
+                        "image_path": images[str(annot["image_id"])],
+                        "question": questions[str(annot["question_id"])],
+                        "answer": majority_answer,
+                    })
     else:
         for question_id, question_text in questions.items():
             dataset.append({
