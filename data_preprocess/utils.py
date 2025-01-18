@@ -21,6 +21,9 @@ def mapping_classes(dataset):
 def get_tokens(samples):
     for sample in samples:
         question = sample["question"]
+        print("-------------------")
+        print(question)
+        print([token.text for token in eng.tokenizer(question)])
         yield [token.text for token in eng.tokenizer(question)]
 
 def build_vocab(dataset):
@@ -31,6 +34,7 @@ def build_vocab(dataset):
         special_first=True,
     )
     vocab.set_default_index(vocab["unk"])
+    return vocab
 
 def tokenize(question, max_seq_len, vocab):
     tokens = [token.text for token in eng.tokenizer(question)]

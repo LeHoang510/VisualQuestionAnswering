@@ -5,6 +5,7 @@ import sys
 import json
 import re
 import time
+from collections import Counter
 # 3rd party lib
 from tqdm import tqdm
 # user lib
@@ -119,14 +120,16 @@ def generate_dataset(images_folder: str, annotations_path: str | None, questions
             annotations = json.load(f)["annotations"]
 
         for annot in tqdm(annotations, desc="Processing annotations", ncols=100, ascii=True):
-            for answer in annot["answers"]:
-                if answer["answer"].lower() in ["yes", "no"]: 
-                    dataset.append({
-                        "id": annot["question_id"],
-                        "image_path": images[str(annot["image_id"])],
-                        "question": questions[str(annot["question_id"])],
-                        "answer": answer["answer"],
-                    })
+            if annot["answer_type"] == "yes/no": 
+                answer_counts = Counter([answer["answer"] for answer in annot["answers"]])
+                majority_answer = answer_counts.most_common(1)[0][0]
+                
+                dataset.append({
+                    "id": annot["question_id"],
+                    "image_path": images[str(annot["image_id"])],
+                    "question": questions[str(annot["question_id"])],
+                    "answer": majority_answer,
+                })
     else:
         for question_id, question_text in questions.items():
             dataset.append({

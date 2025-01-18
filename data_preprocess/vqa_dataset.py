@@ -6,13 +6,13 @@ import torchvision.transforms as transforms
 from data_preprocess.utils import *
 
 class VQADataset(Dataset):
-    def __init__(self, data, max_seq_len=20, transform=None):
+    def __init__(self, data, vocab, mapping, max_seq_len=20, transform=None):
         self.transform = transform
         self.data = data
         self.max_seq_len = max_seq_len
 
-        self.vocab = build_vocab(data)
-        self.label2idx, self.idx2label = mapping_classes(data)
+        self.vocab = vocab
+        self.label2idx, self.idx2label = mapping
     
     def __len__(self):
         return len(self.data)
