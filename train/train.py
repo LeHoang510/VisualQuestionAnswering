@@ -9,7 +9,7 @@ import torch.nn as nn
 BASE_DIR = osp.dirname(osp.dirname(osp.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
-from utils.utils import set_seed, load_yaml
+from utils.utils import set_seed, load_yaml, Logger
 from model.utils import *
 from model.vqa_dataset import VQADataset, VQATransform
 from model.VQAModelBasic import VQAModelBasic
@@ -37,9 +37,18 @@ def evaluate(model, dataloader, criterion, device):
 
     return loss, acc
 
-def fit(model, train_loader, val_loader, criterion, optimizer, scheduler, device, epochs):
+def fit(model, 
+        train_loader, 
+        val_loader, 
+        criterion, 
+        optimizer, 
+        scheduler, 
+        device, 
+        epochs,
+        logger,
+        validation=False):
     train_losses = []
-    # val_losses = []
+    val_losses = []
 
     for epoch in range(epochs):
         batch_train_losses = []
@@ -61,16 +70,17 @@ def fit(model, train_loader, val_loader, criterion, optimizer, scheduler, device
         train_loss = sum(batch_train_losses) / len(batch_train_losses)
         train_losses.append(train_loss)
 
-        # val_loss, val_acc = evaluate(
-        #     model=model,
-        #     dataloader=val_loader,
-        #     criterion=criterion,
-        #     device=device,
-        # )
-        # val_losses.append(val_loss)
-
-        print(f"Epoch {epoch+1}/{epochs}, Train Loss: {train_loss}")
-
+        val_loss, val_acc = None, None
+        if validation:
+            val_loss, val_acc = evaluate(
+                model=model,
+                dataloader=val_loader,
+                criterion=criterion,
+                device=device,
+            )
+            val_losses.append(val_loss)
+        
+        logger.write_dict(epoch, train_loss, val_loss, val_acc)
         scheduler.step()
     
     return train_losses
@@ -139,6 +149,8 @@ def train():
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step_size, gamma=0.1)
 
+    logger = Logger(model, scheduler)
+
     train_losses = fit(
         model=model,
         train_loader=train_loader,
@@ -148,6 +160,7 @@ def train():
         scheduler=scheduler,
         device=device,
         epochs=epochs,
+        logger=logger
     )
 
     val_loss, val_acc = evaluate(
@@ -159,9 +172,9 @@ def train():
 
     print(f"Validation Loss: {val_loss}, Validation Accuracy: {val_acc}")
 
-    torch.save(model.state_dict(), osp.join("ouput", "model.pth"))
+    logger.close()
+    torch.save(model.state_dict(), osp.join("output", "basic_model.pth"))
     print("Model saved")
-
 
 
 if __name__ == "__main__":
