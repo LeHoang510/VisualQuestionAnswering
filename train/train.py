@@ -13,6 +13,7 @@ from utils.utils import set_seed, load_yaml
 from model.utils import *
 from model.vqa_dataset import VQADataset, VQATransform
 from model.VQAModelBasic import VQAModelBasic
+from tqdm import tqdm
 
 def evaluate(model, dataloader, criterion, device):
     model.eval()
@@ -20,7 +21,7 @@ def evaluate(model, dataloader, criterion, device):
     total = 0
     losses = []
     with torch.no_grad():
-        for img, question, label in dataloader:
+        for img, question, label in tqdm(dataloader, desc="Validation"):
             img = img.to(device)
             question = question.to(device)
             label = label.to(device)
@@ -38,13 +39,13 @@ def evaluate(model, dataloader, criterion, device):
 
 def fit(model, train_loader, val_loader, criterion, optimizer, scheduler, device, epochs):
     train_losses = []
-    val_losses = []
+    # val_losses = []
 
     for epoch in range(epochs):
         batch_train_losses = []
         model.train()
 
-        for i, (imgs, questions, labels) in enumerate(train_loader):
+        for i, (imgs, questions, labels) in enumerate(tqdm(train_loader)):
             imgs = imgs.to(device)
             questions = questions.to(device)
             labels = labels.to(device)
@@ -60,25 +61,25 @@ def fit(model, train_loader, val_loader, criterion, optimizer, scheduler, device
         train_loss = sum(batch_train_losses) / len(batch_train_losses)
         train_losses.append(train_loss)
 
-        val_loss, val_acc = evaluate(
-            model=model,
-            dataloader=val_loader,
-            criterion=criterion,
-            device=device,
-        )
-        val_losses.append(val_loss)
+        # val_loss, val_acc = evaluate(
+        #     model=model,
+        #     dataloader=val_loader,
+        #     criterion=criterion,
+        #     device=device,
+        # )
+        # val_losses.append(val_loss)
 
-        print(f"Epoch {epoch+1}/{epochs}, Train Loss: {train_loss}, Val Loss: {val_loss}, Val Acc: {val_acc}")
+        print(f"Epoch {epoch+1}/{epochs}, Train Loss: {train_loss}")
 
         scheduler.step()
     
-    return train_losses, val_losses
+    return train_losses
 
 
 def train():
     set_seed()
 
-    config = load_yaml(osp.join("utils", "dataset_config.yaml"))
+    config = load_yaml(osp.join("utils", "train_config.yaml"))
 
     train_batch_size = config["train"]["batch_size"]
     train_shuffle = config["train"]["shuffle"]
@@ -89,7 +90,7 @@ def train():
     val_workers = config["val"]["workers"]
 
     lr = config["lr"]
-    epochs = config["epochs"]
+    epochs = config["num_epochs"]
 
     with open(osp.join("dataset", "generated_yes_no", "train_dataset.json"), "r") as f:
         dataset = json.load(f)
@@ -119,6 +120,8 @@ def train():
                             shuffle=val_shuffle)
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device = "cpu"
+    print("Device:", device)
 
     model = VQAModelBasic(
         n_classes=len(mapping[0]),
@@ -136,7 +139,7 @@ def train():
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step_size, gamma=0.1)
 
-    train_losses, val_losses = fit(
+    train_losses = fit(
         model=model,
         train_loader=train_loader,
         val_loader=val_loader,
@@ -146,6 +149,15 @@ def train():
         device=device,
         epochs=epochs,
     )
+
+    val_loss, val_acc = evaluate(
+        model=model,
+        dataloader=val_loader,
+        criterion=criterion,
+        device=device,
+    )
+
+    print(f"Validation Loss: {val_loss}, Validation Accuracy: {val_acc}")
 
     torch.save(model.state_dict(), osp.join("ouput", "model.pth"))
     print("Model saved")
