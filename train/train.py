@@ -32,8 +32,47 @@ def evaluate(model, dataloader, criterion, device):
     
     loss = sum(losses) / len(losses)
     acc = correct / total
-    
+
     return loss, acc
+
+def fit(model, train_loader, val_loader, criterion, optimizer, scheduler, device, epochs):
+    train_losses = []
+    val_losses = []
+
+    for epoch in range(epochs):
+        batch_train_losses = []
+        model.train()
+
+        for i, (imgs, questions, labels) in enumerate(train_loader):
+            imgs = imgs.to(device)
+            questions = questions.to(device)
+            labels = labels.to(device)
+
+            optimizer.zero_grad()
+            outputs = model(imgs, questions)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            batch_train_losses.append(loss.item())
+        
+        train_loss = sum(batch_train_losses) / len(batch_train_losses)
+        train_losses.append(train_loss)
+
+        val_loss, val_acc = evaluate(
+            model=model,
+            dataloader=val_loader,
+            criterion=criterion,
+            device=device,
+        )
+        val_losses.append(val_loss)
+
+        print(f"Epoch {epoch+1}/{epochs}, Train Loss: {train_loss}, Val Loss: {val_loss}, Val Acc: {val_acc}")
+
+        scheduler.step()
+    
+    return train_losses, val_losses
+
 
 def train():
     set_seed()
@@ -86,8 +125,6 @@ def train():
         hidden_dim=256,
         dropout=0.2,
     ).to(device)
-
-
 
 if __name__ == "__main__":
     train()
