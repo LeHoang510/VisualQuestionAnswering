@@ -3,6 +3,7 @@ import json
 import sys
 
 from torch.utils.data import DataLoader
+import torch
 
 BASE_DIR = osp.dirname(osp.dirname(osp.abspath(__file__)))
 sys.path.append(BASE_DIR)
@@ -10,8 +11,31 @@ sys.path.append(BASE_DIR)
 from utils.utils import set_seed, load_yaml
 from model.utils import *
 from model.vqa_dataset import VQADataset, VQATransform
+from model.VQAModelBasic import VQAModelBasic
 
-if __name__ == "__main__":
+def evaluate(model, dataloader, criterion, device):
+    model.eval()
+    correct = 0
+    total = 0
+    losses = []
+    with torch.no_grad():
+        for img, question, label in dataloader:
+            img = img.to(device)
+            question = question.to(device)
+            label = label.to(device)
+            outputs = model(img, question)
+            loss = criterion(outputs, label)
+            losses.append(loss.item())
+            _, predicted = torch.max(outputs.data, 1)
+            total += label.size(0)
+            correct += (predicted == label).sum().item()
+    
+    loss = sum(losses) / len(losses)
+    acc = correct / total
+    
+    return loss, acc
+
+def train():
     set_seed()
 
     config = load_yaml(osp.join("utils", "dataset_config.yaml"))
@@ -50,4 +74,20 @@ if __name__ == "__main__":
                             batch_size=val_batch_size,
                             num_workers=val_workers,
                             shuffle=val_shuffle)
+    
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+    model = VQAModelBasic(
+        n_classes=len(mapping[0]),
+        vocab=vocab,
+        img_model_name="resnet18",
+        embedding_dim=128,
+        n_layers=2,
+        hidden_dim=256,
+        dropout=0.2,
+    ).to(device)
+
+
+
+if __name__ == "__main__":
+    train()

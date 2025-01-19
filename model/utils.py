@@ -16,7 +16,7 @@ def mapping_classes(dataset):
     classes = set([sample["answer"] for sample in dataset])
     label2idx = {label: idx for idx, label in enumerate(classes)}
     idx2label = {idx: label for label, idx in enumerate(classes)}
-    return label2idx, idx2label
+    return classes, label2idx, idx2label
 
 def get_tokens(samples):
     # Split the question into tokens by using spacy tokenizer

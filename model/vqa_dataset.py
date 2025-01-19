@@ -12,7 +12,7 @@ class VQADataset(Dataset):
         self.max_seq_len = max_seq_len
 
         self.vocab = vocab
-        self.label2idx, self.idx2label = mapping
+        self.classes, self.label2idx, self.idx2label = mapping
     
     def __len__(self):
         return len(self.data)
@@ -21,7 +21,7 @@ class VQADataset(Dataset):
         img_path = self.data[index]["image_path"]
         question = self.data[index]["question"]
 
-        img = Image.open(img_path)
+        img = Image.open(img_path).convert("RGB")
         if self.transform:
             img = self.transform(img)
         
