@@ -34,20 +34,29 @@ class VQADataset(Dataset):
         return img, question, label
 
 class VQATransform():
-    def get_transform(self, type):
-        if type == "train":
+    def get_transform(self, model, type):
+        if model == "advance":
             return transforms.Compose([
                 transforms.Resize((224, 224)),
                 transforms.CenterCrop(180),
                 transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1),
                 transforms.RandomHorizontalFlip(),
                 transforms.GaussianBlur(3),
-                transforms.ToTensor(),
-                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
             ])
-        if type == "val":
-            return transforms.Compose([
-                transforms.Resize((224, 224)),
-                transforms.ToTensor(),
-                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-            ])
+        if model == "basic":
+            if type == "train":
+                return transforms.Compose([
+                    transforms.Resize((224, 224)),
+                    transforms.CenterCrop(180),
+                    transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1),
+                    transforms.RandomHorizontalFlip(),
+                    transforms.GaussianBlur(3),
+                    transforms.ToTensor(),
+                    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+                ])
+            if type == "val":
+                return transforms.Compose([
+                    transforms.Resize((224, 224)),
+                    transforms.ToTensor(),
+                    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+                ])

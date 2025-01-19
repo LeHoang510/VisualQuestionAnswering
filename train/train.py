@@ -112,12 +112,12 @@ def train():
     train_dataset = VQADataset(data=dataset, 
                                vocab=vocab,
                                mapping=mapping,
-                               transform=VQATransform().get_transform("train"))
+                               transform=VQATransform().get_transform("basic","train"))
     
     val_dataset = VQADataset(data=dataset,
                              vocab=vocab,
                              mapping=mapping,
-                             transform=VQATransform().get_transform("val"))
+                             transform=VQATransform().get_transform("basic","val"))
     
     train_loader = DataLoader(train_dataset, 
                               batch_size=train_batch_size, 

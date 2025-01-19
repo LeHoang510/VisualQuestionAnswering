@@ -7,7 +7,7 @@ import torch
 import yaml
 from torch.utils.tensorboard import SummaryWriter
 
-def set_seed(seed: int = 5555):
+def set_seed(seed: int = 555):
 	random.seed(seed)
 	np.random.seed(seed)
 	torch.manual_seed(seed)
