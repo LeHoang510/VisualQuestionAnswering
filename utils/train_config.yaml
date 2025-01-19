@@ -13,3 +13,6 @@ config:
     batch_size: 32
     shuffle: False
     num_workers: 4
+  
+  lr: 0.001
+  num_epochs: 50

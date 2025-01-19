@@ -4,6 +4,7 @@ import sys
 
 from torch.utils.data import DataLoader
 import torch
+import torch.nn as nn
 
 BASE_DIR = osp.dirname(osp.dirname(osp.abspath(__file__)))
 sys.path.append(BASE_DIR)
@@ -87,6 +88,9 @@ def train():
     val_shuffle = config["val"]["shuffle"]
     val_workers = config["val"]["workers"]
 
+    lr = config["lr"]
+    epochs = config["epochs"]
+
     with open(osp.join("dataset", "generated_yes_no", "train_dataset.json"), "r") as f:
         dataset = json.load(f)
     print(f"Dataset length: {len(dataset)}")
@@ -125,6 +129,28 @@ def train():
         hidden_dim=256,
         dropout=0.2,
     ).to(device)
+    
+    scheduler_step_size = epochs * 0.8
+    criterion = nn.CrossEntropyLoss()
+
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step_size, gamma=0.1)
+
+    train_losses, val_losses = fit(
+        model=model,
+        train_loader=train_loader,
+        val_loader=val_loader,
+        criterion=criterion,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        device=device,
+        epochs=epochs,
+    )
+
+    torch.save(model.state_dict(), osp.join("ouput", "model.pth"))
+    print("Model saved")
+
+
 
 if __name__ == "__main__":
     train()
