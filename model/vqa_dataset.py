@@ -1,19 +1,21 @@
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 from PIL import Image
 import torch
 import torchvision.transforms as transforms
+from transformers import ViTImageProcessor
+from transformers import AutoTokenizer
 
 from model.utils import *
 
-class VQADataset(Dataset):
-    def __init__(self, data, vocab, mapping, max_seq_len=20, transform=None):
+class VQADatasetBasic(Dataset):
+    def __init__(self, data, vocab, mapping, transform=None):
         self.transform = transform
         self.data = data
-        self.max_seq_len = max_seq_len
+        self.max_seq_len = 20
 
         self.vocab = vocab
         self.classes, self.label2idx, self.idx2label = mapping
-    
+
     def __len__(self):
         return len(self.data)
     
@@ -30,6 +32,43 @@ class VQADataset(Dataset):
 
         label = self.label2idx[self.data[index]["answer"]]
         label = torch.tensor(label, dtype=torch.long)
+
+        return img, question, label
+
+class VQADatasetAdvance(Dataset):
+    def __init__(self, data, mapping, device, transform=None):
+        self.transform = transform
+        self.data = data
+        self.device = device
+
+        self.classes, self.label2idx, self.idx2label = mapping
+        
+        self.img_feature_extractor = ViTImageProcessor.from_pretrained("google/vit-base-patch16-224")
+        self.tokenizer = AutoTokenizer.from_pretrained("roberta-base")
+
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, index):
+        img_path = self.data[index]["image_path"]
+        question = self.data[index]["question"]
+
+        img = Image.open(img_path).convert("RGB")
+        if self.transform:
+            img = self.transform(img)
+        img = self.img_feature_extractor(images=img, 
+                                         return_tensors="pt")
+        img = {k: v.to(self.device) for k, v in img.items()}
+
+        question = self.tokenizer(question, 
+                                  padding="max_length", 
+                                  max_length=20, 
+                                  truncation=True, 
+                                  return_tensors="pt")
+        question = {k: v.to(self.device).squeeze(0) for k, v in question.items()}
+
+        label = self.label2idx[self.data[index]["answer"]]
+        label = torch.tensor(label, dtype=torch.long).to(self.device)
 
         return img, question, label
 

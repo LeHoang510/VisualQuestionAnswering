@@ -11,7 +11,7 @@ sys.path.append(BASE_DIR)
 
 from utils.utils import set_seed, load_yaml, Logger
 from model.utils import *
-from model.vqa_dataset import VQADataset, VQATransform
+from model.vqa_dataset import VQADatasetBasic, VQATransform
 from model.VQAModelBasic import VQAModelBasic
 from tqdm import tqdm
 
@@ -109,12 +109,12 @@ def train():
     vocab = build_vocab(dataset)
     mapping = mapping_classes(dataset)
 
-    train_dataset = VQADataset(data=dataset, 
+    train_dataset = VQADatasetBasic(data=dataset, 
                                vocab=vocab,
                                mapping=mapping,
                                transform=VQATransform().get_transform("basic","train"))
     
-    val_dataset = VQADataset(data=dataset,
+    val_dataset = VQADatasetBasic(data=dataset,
                              vocab=vocab,
                              mapping=mapping,
                              transform=VQATransform().get_transform("basic","val"))
