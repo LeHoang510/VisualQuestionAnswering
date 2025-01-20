@@ -11,7 +11,7 @@ sys.path.append(BASE_DIR)
 
 from utils.utils import set_seed, load_yaml, Logger
 from model.utils import *
-from model.vqa_dataset import VQADatasetBasic, VQATransform
+from model.vqa_dataset import VQADatasetBasic, VQADatasetAdvance, VQATransform
 from model.VQAModelBasic import VQAModelBasic
 from tqdm import tqdm
 
@@ -85,8 +85,7 @@ def fit(model,
     
     return train_losses
 
-
-def train():
+def train_basic():
     set_seed()
 
     config = load_yaml(osp.join("utils", "train_config.yaml"))
@@ -108,6 +107,9 @@ def train():
 
     vocab = build_vocab(dataset)
     mapping = mapping_classes(dataset)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device = "cpu"
+    print("Device:", device)
 
     train_dataset = VQADatasetBasic(data=dataset, 
                                vocab=vocab,
@@ -128,19 +130,10 @@ def train():
                             batch_size=val_batch_size,
                             num_workers=val_workers,
                             shuffle=val_shuffle)
-    
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # device = "cpu"
-    print("Device:", device)
 
     model = VQAModelBasic(
         n_classes=len(mapping[0]),
-        vocab=vocab,
-        img_model_name="resnet18",
-        embedding_dim=128,
-        n_layers=2,
-        hidden_dim=256,
-        dropout=0.2,
+        vocab=vocab
     ).to(device)
     
     scheduler_step_size = epochs * 0.8
@@ -176,6 +169,53 @@ def train():
     torch.save(model.state_dict(), osp.join("output", "basic_model.pth"))
     print("Model saved")
 
+def train_advance():
+    set_seed()
+
+    config = load_yaml(osp.join("utils", "train_config.yaml"))
+
+    train_batch_size = config["train"]["batch_size"]
+    train_shuffle = config["train"]["shuffle"]
+    train_workers = config["train"]["workers"]
+
+    val_batch_size = config["val"]["batch_size"]
+    val_shuffle = config["val"]["shuffle"]
+    val_workers = config["val"]["workers"]
+
+    lr = config["lr"]
+    epochs = config["num_epochs"]
+
+    with open(osp.join("dataset", "generated_yes_no", "train_dataset.json"), "r") as f:
+        dataset = json.load(f)
+    print(f"Dataset length: {len(dataset)}")
+
+    mapping = mapping_classes(dataset)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device = "cpu"
+    print("Device:", device)
+
+    train_dataset = VQADatasetAdvance(data=dataset,
+                                      mapping=mapping,
+                                      device=device,
+                                      transform=VQATransform().get_transform("advance"))
+
+    val_dataset = VQADatasetAdvance(data=dataset,
+                                    mapping=mapping,
+                                    device=device,
+                                    transform=VQATransform().get_transform("advance"))
+    
+    train_loader = DataLoader(train_dataset,
+                              batch_size=train_batch_size,
+                              num_workers=train_workers,
+                              shuffle=train_shuffle)
+    
+    val_loader = DataLoader(val_dataset,
+                            batch_size=val_batch_size,
+                            num_workers=val_workers,
+                            shuffle=val_shuffle)
+    
+    
+    
 
 if __name__ == "__main__":
-    train()
+    train_basic()

@@ -1,5 +1,8 @@
+import sys
+import os
+import multiprocessing
+
 import torch
-import numpy as np
 
 def check_cuda():
     if torch.cuda.is_available():
@@ -13,7 +16,15 @@ def check_cuda():
     else:
         print("CUDA is not available.")
 
-import sys
+def check_workers():
+    logical_cpus = os.cpu_count()
+
+    # Number of physical CPU cores (if supported)
+    physical_cpus = multiprocessing.cpu_count()
+
+    print(f"Logical CPUs: {logical_cpus}")
+    print(f"Physical CPUs: {physical_cpus}")
+
 
 def list_importable_directories():
     print("Directories Python can import from:")
@@ -23,3 +34,4 @@ def list_importable_directories():
 if __name__ == "__main__":
     check_cuda()
     list_importable_directories()
+    check_workers()

@@ -73,7 +73,7 @@ class VQADatasetAdvance(Dataset):
         return img, question, label
 
 class VQATransform():
-    def get_transform(self, model, type):
+    def get_transform(self, model, type="train"):
         if model == "advance":
             return transforms.Compose([
                 transforms.Resize((224, 224)),

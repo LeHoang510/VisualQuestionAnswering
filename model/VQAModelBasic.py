@@ -8,18 +8,16 @@ class VQAModelBasic(nn.Module):
             self,
             n_classes: int,
             vocab: Vocab,
-            img_model_name: str,
-            embedding_dim: int,
-            n_layers: int,
-            hidden_dim: int,
+            embedding_dim: int=128,
+            n_layers: int=2,
+            hidden_dim: int=256,
             dropout: float=0.2,
     ):
         super(VQAModelBasic, self).__init__()
-        self.img_encoder = timm.create_model(img_model_name, 
-                                               pretrained=True,
-                                               num_classes=hidden_dim)
-        
-        for param in self.img_encoder.parameters():
+        self.visual_encoder = timm.create_model("resnet18", 
+                                             pretrained=True,
+                                             num_classes=hidden_dim)
+        for param in self.visual_encoder.parameters():
             param.requires_grad = True
         
         self.text_encoder = nn.Embedding(len(vocab), embedding_dim)
@@ -38,7 +36,7 @@ class VQAModelBasic(nn.Module):
         self.fc2 = nn.Linear(hidden_dim, n_classes)
     
     def forward(self, img, text):
-        img_features = self.img_encoder(img)
+        img_features = self.visual_encoder(img)
         
         text_features = self.text_encoder(text)
         lstm_out, _ = self.lstm(text_features)
