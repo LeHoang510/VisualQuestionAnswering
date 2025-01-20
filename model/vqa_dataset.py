@@ -4,7 +4,7 @@ import torch
 import torchvision.transforms as transforms
 from transformers import ViTImageProcessor
 from transformers import AutoTokenizer
-import torch.multiprocessing as mp
+from transformers import AutoProcessor
 
 from model.utils import *
 
@@ -72,6 +72,32 @@ class VQADatasetAdvance(Dataset):
         label = torch.tensor(label, dtype=torch.long).to(self.device)
 
         return img, question, label
+
+class VQAVLLMDataset(Dataset):
+    def __init__(self, data):
+        self.data = data
+
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, index):
+        img_path = self.data[index]["image_path"]
+        question = self.data[index]["question"]
+        label = self.data[index]["answer"]
+
+        img = Image.open(img_path).convert("RGB")
+        question = self.create_prompt(question)
+
+        return img, question, label
+    
+    def create_prompt(self, question):
+        prompt = """### INSTRUCTION:
+        Your task is to answer the question based on the given image. 
+        You can only answer 'yes' or 'no'.
+        ### USER: <image>
+        {question}
+        ### ASSISTANT:"""
+        return prompt
 
 class VQATransform():
     def get_transform(self, model, type="train"):

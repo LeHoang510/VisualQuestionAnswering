@@ -4,4 +4,6 @@ Analyse image and answer the given question by using Computer Vision and Natural
 - TODO: 
 + rewrite yaml file
 + print to see the tensor size of model
++ write test for all model
++ write the vllm 
 
