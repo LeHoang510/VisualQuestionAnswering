@@ -43,14 +43,14 @@ class Classifier(nn.Module):
     
 class VQAModelAdvance(nn.Module):
     def __init__(self, 
+                 n_classes: int,
                  text_encoder: nn.Module=TextEncoder(),
                  visual_encoder: nn.Module=VisualEncoder(),
-                 classifier: nn.Module=Classifier()
     ):
         super(VQAModelAdvance, self).__init__()
         self.text_encoder = text_encoder
         self.visual_encoder = visual_encoder
-        self.classifier = classifier
+        self.classifier = Classifier(n_classes=n_classes)
 
     def forward(self, img, text):
         img_features = self.visual_encoder(img)

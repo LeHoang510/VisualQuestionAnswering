@@ -113,15 +113,13 @@ def train():
     
     train_loader = DataLoader(train_dataset,
                               batch_size=train_batch_size,
-                              num_workers=train_workers,
                               shuffle=train_shuffle)
     
     val_loader = DataLoader(val_dataset,
                             batch_size=val_batch_size,
-                            num_workers=val_workers,
                             shuffle=val_shuffle)
     
-    model = VQAModelAdvance().to(device)
+    model = VQAModelAdvance(n_classes=len(mapping[0])).to(device)
     model.freeze()
 
     scheduler_step_size = epochs * 0.8
@@ -138,7 +136,8 @@ def train():
                                    criterion=criterion,
                                    optimizer=optimizer,
                                    scheduler=scheduler,
-                                   epochs=epochs)
+                                   epochs=epochs,
+                                   logger=logger)
     
     val_loss, val_acc = evaluate(model, val_loader, criterion)
 

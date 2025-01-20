@@ -4,6 +4,7 @@ import torch
 import torchvision.transforms as transforms
 from transformers import ViTImageProcessor
 from transformers import AutoTokenizer
+import torch.multiprocessing as mp
 
 from model.utils import *
 
@@ -26,7 +27,7 @@ class VQADatasetBasic(Dataset):
         img = Image.open(img_path).convert("RGB")
         if self.transform:
             img = self.transform(img)
-        
+
         question = tokenize(question, self.max_seq_len, self.vocab)
         question = torch.tensor(question, dtype=torch.long)
 
@@ -58,7 +59,7 @@ class VQADatasetAdvance(Dataset):
             img = self.transform(img)
         img = self.img_feature_extractor(images=img, 
                                          return_tensors="pt")
-        img = {k: v.to(self.device) for k, v in img.items()}
+        img = {k: v.to(self.device).squeeze(0) for k, v in img.items()}
 
         question = self.tokenizer(question, 
                                   padding="max_length", 
