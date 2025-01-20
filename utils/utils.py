@@ -28,7 +28,7 @@ class Logger:
         self.writer = None
         self.log_dir = log_dir
 
-    def write_dict(self, epoch, train_loss, val_loss, val_acc):
+    def write_dict(self, epoch, total_epoch, train_loss, val_loss, val_acc):
         if self.writer is None:
             self.writer = SummaryWriter(log_dir=self.log_dir)
         
@@ -36,10 +36,10 @@ class Logger:
             self.writer.add_scalar("Loss/Train", train_loss, epoch)
             self.writer.add_scalar("Loss/Val", val_loss, epoch)
             self.writer.add_scalar("Accuracy/Val", val_acc, epoch)
-            print(f"Epoch {epoch+1}/{epoch}, Train Loss: {train_loss}, Val Loss: {val_loss}, Val Acc: {val_acc}")
+            print(f"Epoch {epoch}/{total_epoch}, Train Loss: {train_loss}, Val Loss: {val_loss}, Val Acc: {val_acc}")
         else:
             self.writer.add_scalar("Loss/Train", train_loss, epoch)
-            print(f"Epoch {epoch+1}/{epoch}, Train Loss: {train_loss}")
+            print(f"Epoch {epoch}/{total_epoch}, Train Loss: {train_loss}")
     
     def close(self):
         self.writer.close()

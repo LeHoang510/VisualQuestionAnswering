@@ -80,7 +80,7 @@ def fit(model,
             )
             val_losses.append(val_loss)
         
-        logger.write_dict(epoch, train_loss, val_loss, val_acc)
+        logger.write_dict(epoch, epochs, train_loss, val_loss, val_acc)
         scheduler.step()
     
     return train_losses
