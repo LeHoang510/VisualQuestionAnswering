@@ -73,32 +73,6 @@ class VQADatasetAdvance(Dataset):
 
         return img, question, label
 
-class VQAVLLMDataset(Dataset):
-    def __init__(self, data):
-        self.data = data
-
-    def __len__(self):
-        return len(self.data)
-    
-    def __getitem__(self, index):
-        img_path = self.data[index]["image_path"]
-        question = self.data[index]["question"]
-        label = self.data[index]["answer"]
-
-        img = Image.open(img_path).convert("RGB")
-        question = self.create_prompt(question)
-
-        return img, question, label
-    
-    def create_prompt(self, question):
-        prompt = """### INSTRUCTION:
-        Your task is to answer the question based on the given image. 
-        You can only answer 'yes' or 'no'.
-        ### USER: <image>
-        {question}
-        ### ASSISTANT:"""
-        return prompt
-
 class VQATransform():
     def get_transform(self, model, type="train"):
         if model == "advance":
