@@ -42,7 +42,7 @@ def evaluate(model, dataset):
 
 def train():
     set_seed()
-    with open(osp.join("dataset", "generated_yes_no", "train_dataset.json"), "r") as f:
+    with open(osp.join("dataset", "generated_yes_no", "val_dataset.json"), "r") as f:
         dataset = json.load(f)
     print(f"Dataset length: {len(dataset)}")
 

@@ -93,20 +93,24 @@ def train():
     epochs = config["num_epochs"]
 
     with open(osp.join("dataset", "generated_yes_no", "train_dataset.json"), "r") as f:
-        dataset = json.load(f)
-    print(f"Dataset length: {len(dataset)}")
+        train_dataset = json.load(f)
+    print(f"Dataset length: {len(train_dataset)}")
 
-    mapping = mapping_classes(dataset)
+    with open(osp.join("dataset", "generated_yes_no", "val_dataset.json"), "r") as f:
+        val_dataset = json.load(f)
+    print(f"Dataset length: {len(val_dataset)}")
+
+    mapping = mapping_classes(train_dataset)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # device = "cpu"
     print("Device:", device)
 
-    train_dataset = VQADatasetAdvance(data=dataset,
+    train_dataset = VQADatasetAdvance(data=train_dataset,
                                       mapping=mapping,
                                       device=device,
                                       transform=VQATransform().get_transform("advance"))
 
-    val_dataset = VQADatasetAdvance(data=dataset,
+    val_dataset = VQADatasetAdvance(data=val_dataset,
                                     mapping=mapping,
                                     device=device,
                                     transform=VQATransform().get_transform("advance"))
