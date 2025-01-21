@@ -80,7 +80,7 @@ def fit(model,
             )
             val_losses.append(val_loss)
         
-        logger.write_dict(epoch, epochs, train_loss, val_loss, val_acc)
+        logger.write_dict(epoch+1, epochs, train_loss, val_loss, val_acc)
         scheduler.step()
     
     return train_losses, val_losses
@@ -146,7 +146,7 @@ def train():
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step_size, gamma=0.1)
 
-    logger = Logger(model, scheduler)
+    logger = Logger(model, scheduler, log_dir=osp.join("output", "basic_logs"))
 
     train_losses, val_losses = fit(
         model=model,

@@ -1,4 +1,5 @@
 import os.path as osp
+import os
 import json
 import sys
 
@@ -14,6 +15,36 @@ from model.utils import *
 from model.vqa_dataset import VQADatasetAdvance, VQATransform
 from model.VQAModelAdvance import VQAModelAdvance
 from tqdm import tqdm
+
+def save_checkpoint(epoch, model, optimizer, scheduler, train_losses, val_losses, checkpoint_path):
+    os.makedirs(osp.dirname(checkpoint_path), exist_ok=True)
+    checkpoint = {
+        "epoch": epoch,
+        "model_state_dict": model.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "scheduler_state_dict": scheduler.state_dict(),
+        "train_losses": train_losses,
+        "val_losses": val_losses,
+    }
+    torch.save(checkpoint, checkpoint_path)
+    print(f"Checkpoint saved at epoch {epoch+1}")
+
+
+def load_checkpoint(checkpoint_path, model, optimizer, scheduler):
+    """Load training state from a checkpoint."""
+    if os.path.exists(checkpoint_path):
+        checkpoint = torch.load(checkpoint_path)
+        model.load_state_dict(checkpoint["model_state_dict"])
+        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+        scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+        start_epoch = checkpoint["epoch"] + 1
+        train_losses = checkpoint["train_losses"]
+        val_losses = checkpoint["val_losses"]
+        print(f"Checkpoint loaded. Resuming from epoch {start_epoch}.")
+        return start_epoch, train_losses, val_losses
+    else:
+        print("No checkpoint found. Starting from scratch.")
+        return 0, [], []
 
 def evaluate(model, dataloader, criterion):
     model.eval()
@@ -42,11 +73,18 @@ def fit(model,
         scheduler, 
         epochs,
         logger,
-        validation=False):
-    train_losses = []
-    val_losses = []
+        validation=False,
+        start_epoch=0,
+        checkpoint_path=osp.join("output", "advance_checkpoint.pth"),
+        train_losses=None,
+        val_losses=None):
+    
+    if train_losses is None:
+        train_losses = []
+    if val_losses is None:
+        val_losses = []
 
-    for epoch in range(epochs):
+    for epoch in range(start_epoch, epochs):
         batch_train_losses = []
         model.train()
 
@@ -71,8 +109,10 @@ def fit(model,
             )
             val_losses.append(val_loss)
         
-        logger.write_dict(epoch, epochs, train_loss, val_loss, val_acc)
+        logger.write_dict(epoch+1, epochs, train_loss, val_loss, val_acc)
         scheduler.step()
+
+        save_checkpoint(epoch, model, optimizer, scheduler, train_losses, val_losses, checkpoint_path)
     
     return train_losses, val_losses
 
@@ -80,6 +120,7 @@ def train():
     set_seed()
 
     config = load_yaml(osp.join("utils", "train_config.yaml"))
+    checkpoint_path = osp.join("output", "advance_checkpoint.pth")
 
     train_batch_size = config["train"]["batch_size"]
     train_shuffle = config["train"]["shuffle"]
@@ -132,7 +173,9 @@ def train():
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step_size, gamma=0.1)
 
-    logger = Logger(model, scheduler)
+    start_epoch, train_losses, val_losses = load_checkpoint(checkpoint_path, model, optimizer, scheduler)
+
+    logger = Logger(model, scheduler, log_dir=osp.join("output", "advance_logs"))
 
     train_losses, val_losses = fit(model=model,
                                    train_loader=train_loader,
@@ -141,7 +184,11 @@ def train():
                                    optimizer=optimizer,
                                    scheduler=scheduler,
                                    epochs=epochs,
-                                   logger=logger)
+                                   logger=logger,
+                                   checkpoint_path=checkpoint_path,
+                                   start_epoch=start_epoch,
+                                   train_losses=train_losses,
+                                   val_losses=val_losses)
     
     val_loss, val_acc = evaluate(model, val_loader, criterion)
 
