@@ -198,5 +198,9 @@ def train():
     torch.save(model.state_dict(), osp.join("output", "advance_model.pth"))
     print("Model saved")
 
+    if osp.exists(checkpoint_path):
+        os.remove(checkpoint_path)
+        print(f"Checkpoint file {checkpoint_path} removed after completion.")
+
 if __name__ == "__main__":
     train()

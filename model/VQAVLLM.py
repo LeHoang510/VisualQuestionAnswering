@@ -19,7 +19,7 @@ class VQAVLLM():
                                                   top_k=50,
                                                   eos_token_id=self.model.config.eos_token_id,
                                                   pad_token_id=self.model.config.pad_token_id,)
-
+        
     def predict(self, img_path, text):
         img = Image.open(img_path).convert("RGB")
         text = self.create_prompt(text)
