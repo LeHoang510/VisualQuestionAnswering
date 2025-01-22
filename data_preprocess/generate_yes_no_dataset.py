@@ -14,7 +14,7 @@ sys.path.append(BASE_DIR)
 
 from utils.utils import load_yaml
 
-config = load_yaml(osp.join("utils", "dataset_config.yaml"))
+config = load_yaml(osp.join("utils", "config.yaml"))
 
 train_images_path = osp.join(*config['paths']['train_images'])
 val_images_path = osp.join(*config['paths']['val_images'])

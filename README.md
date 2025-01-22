@@ -6,6 +6,4 @@ Analyse image and answer the given question by using Computer Vision and Natural
 + print to see the tensor size of model
 + write test for all model
 + write readme about the project
-+ export llava-7b to onnx
-+ add checkpoint to vllm
 

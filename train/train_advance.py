@@ -119,7 +119,7 @@ def fit(model,
 def train():
     set_seed()
 
-    config = load_yaml(osp.join("utils", "train_config.yaml"))
+    config = load_yaml(osp.join("utils", "config.yaml"))
     checkpoint_path = osp.join("output", "advance_checkpoint.pth")
 
     train_batch_size = config["train"]["batch_size"]
