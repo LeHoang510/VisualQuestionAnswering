@@ -17,7 +17,6 @@ from tqdm import tqdm
 def evaluate(model, dataset, label2idx):
     correct = 0
     total = 0
-    losses = []
 
     with torch.no_grad():
         for sample in tqdm(dataset, desc="Validation"):
@@ -30,15 +29,12 @@ def evaluate(model, dataset, label2idx):
             output = label2idx[output]
             label = label2idx[label]
 
-            loss = -(label * torch.log(torch.tensor(output)) + (1 - label) * torch.log(torch.tensor(1 - output)))
-            losses.append(loss.item())
             total += 1
             correct += 1 if output == label else 0
             
-    loss = sum(losses) / len(losses)
     acc = correct / total
 
-    return loss, acc
+    return acc
 
 def train():
     set_seed()
@@ -55,9 +51,9 @@ def train():
     torch.cuda.empty_cache()
     model = VQAVLLM(device)
 
-    val_loss, val_acc = evaluate(model, dataset, mapping[1])
+    val_acc = evaluate(model, dataset, mapping[1])
 
-    print(f"Validation Loss: {val_loss}, Validation Accuracy: {val_acc}")
+    print(f"Validation Accuracy: {val_acc}")
 
 
 if __name__ == "__main__":
