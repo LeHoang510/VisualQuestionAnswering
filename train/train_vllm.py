@@ -14,7 +14,7 @@ from model.utils import *
 from model.VQAVLLM import VQAVLLM
 from tqdm import tqdm
 
-def evaluate(model, dataset):
+def evaluate(model, dataset, label2idx):
     correct = 0
     total = 0
     losses = []
@@ -23,12 +23,12 @@ def evaluate(model, dataset):
         for sample in tqdm(dataset, desc="Validation"):
             img = sample["image_path"]
             question = sample["question"]
-            label = sample["answer"]
+            label = sample["answer"].lower()
 
             output = model.predict(img, question).lower()
             
-            output = 1.0 if output == "yes" else 0.0
-            label = 1 if label.lower() == "yes" else 0
+            output = label2idx[output]
+            label = label2idx[label]
 
             loss = -(label * torch.log(torch.tensor(output)) + (1 - label) * torch.log(torch.tensor(1 - output)))
             losses.append(loss.item())
@@ -50,10 +50,12 @@ def train():
     # device = "cpu"
     print("Device:", device)
 
+    mapping = mapping_classes(dataset)
+
     torch.cuda.empty_cache()
     model = VQAVLLM(device)
 
-    val_loss, val_acc = evaluate(model, dataset)
+    val_loss, val_acc = evaluate(model, dataset, mapping[1])
 
     print(f"Validation Loss: {val_loss}, Validation Accuracy: {val_acc}")
 

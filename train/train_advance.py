@@ -32,7 +32,7 @@ def save_checkpoint(epoch, model, optimizer, scheduler, train_losses, val_losses
 
 def load_checkpoint(checkpoint_path, model, optimizer, scheduler):
     """Load training state from a checkpoint."""
-    if os.path.exists(checkpoint_path):
+    if osp.exists(checkpoint_path):
         checkpoint = torch.load(checkpoint_path)
         model.load_state_dict(checkpoint["model_state_dict"])
         optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
@@ -142,6 +142,8 @@ def train():
     print(f"Dataset length: {len(val_dataset)}")
 
     mapping = mapping_classes(train_dataset)
+    print(mapping)
+    exit(0)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # device = "cpu"
     print("Device:", device)

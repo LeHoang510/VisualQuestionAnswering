@@ -9,6 +9,7 @@ BASE_DIR = osp.dirname(osp.dirname(osp.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
 from utils.utils import set_seed
+from model.utils import mapping_classes
 from model.VQAVLLM import VQAVLLM
 
 
@@ -25,7 +26,7 @@ def load_checkpoint(checkpoint_path):
         return progress
     return {"processed_indices": [], "losses": [], "correct": 0, "total": 0}
 
-def evaluate(model, dataset, checkpoint_path):
+def evaluate(model, dataset, label2idx, checkpoint_path):
     progress = load_checkpoint(checkpoint_path)
     processed_indices = set(progress["processed_indices"])
     losses = progress["losses"]
@@ -39,12 +40,12 @@ def evaluate(model, dataset, checkpoint_path):
 
             img = sample["image_path"]
             question = sample["question"]
-            label = sample["answer"]
+            label = sample["answer"].lower()
 
             try:
                 output = model.predict(img, question).lower()
-                output = 1.0 if output == "yes" else 0.0
-                label = 1 if label.lower() == "yes" else 0
+                output = label2idx[output]
+                label = label2idx[label]
 
                 loss = -(label * torch.log(torch.tensor(output)) + (1 - label) * torch.log(torch.tensor(1 - output)))
                 losses.append(loss.item())
@@ -77,10 +78,12 @@ def train():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Device:", device)
 
+    mapping = mapping_classes(dataset)
+
     torch.cuda.empty_cache()
     model = VQAVLLM(device)
 
-    val_loss, val_acc = evaluate(model, dataset, checkpoint_path)
+    val_loss, val_acc = evaluate(model, dataset, mapping[1], checkpoint_path)
 
     print(f"Validation Loss: {val_loss}, Validation Accuracy: {val_acc}")
 

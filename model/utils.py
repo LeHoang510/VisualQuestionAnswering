@@ -8,14 +8,13 @@ import spacy
 import torchtext
 torchtext.disable_torchtext_deprecation_warning()
 from torchtext.vocab import build_vocab_from_iterator
-from torchtext.data.utils import get_tokenizer
 
 eng = spacy.load('en_core_web_sm')
 
 def mapping_classes(dataset):
     classes = set([sample["answer"] for sample in dataset])
-    label2idx = {label: idx for idx, label in enumerate(classes)}
-    idx2label = {idx: label for label, idx in enumerate(classes)}
+    label2idx = {label: idx for idx, label in enumerate(sorted(classes))}
+    idx2label = {idx: label for idx, label in enumerate(sorted(classes))}
     return classes, label2idx, idx2label
 
 def get_tokens(samples):
