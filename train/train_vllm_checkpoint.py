@@ -53,19 +53,20 @@ def evaluate(model, dataset, label2idx, checkpoint_path):
                 correct += 1 if output == label else 0
 
                 progress["processed_indices"].append(idx)
-                progress["losses"] = losses
-                progress["correct"] = correct
-                progress["total"] = total
+                if idx % 100 == 0:
+                    progress["losses"] = losses
+                    progress["correct"] = correct
+                    progress["total"] = total
 
-                save_checkpoint(checkpoint_path, progress)
+                    save_checkpoint(checkpoint_path, progress)
 
             except Exception as e:
                 print(f"Error processing sample {idx}: {e}")
 
-    loss = sum(losses) / len(losses) if losses else float("inf")
+    # loss = sum(losses) / len(losses) if losses else float("inf")
     acc = correct / total if total > 0 else 0
 
-    return loss, acc
+    return acc
 
 def train():
     set_seed()
@@ -83,14 +84,14 @@ def train():
     torch.cuda.empty_cache()
     model = VQAVLLM(device)
 
-    val_loss, val_acc = evaluate(model, dataset, mapping[1], checkpoint_path)
+    val_acc = evaluate(model, dataset, mapping[1], checkpoint_path)
 
-    print(f"Validation Loss: {val_loss}, Validation Accuracy: {val_acc}")
+    print(f"Validation Accuracy: {val_acc}")
 
     # Clean up checkpoint after successful completion
-    if osp.exists(checkpoint_path):
-        os.remove(checkpoint_path)
-        print(f"Checkpoint file {checkpoint_path} removed after completion.")
+    # if osp.exists(checkpoint_path):
+    #     os.remove(checkpoint_path)
+    #     print(f"Checkpoint file {checkpoint_path} removed after completion.")
 
 if __name__ == "__main__":
     train()

@@ -142,8 +142,7 @@ def train():
     print(f"Dataset length: {len(val_dataset)}")
 
     mapping = mapping_classes(train_dataset)
-    print(mapping)
-    exit(0)
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # device = "cpu"
     print("Device:", device)
