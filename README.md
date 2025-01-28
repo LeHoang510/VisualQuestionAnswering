@@ -13,3 +13,7 @@ Analyse image and answer the given question by using Computer Vision and Natural
 - Basic model - Accuracy: 0.56
 - Advance model - Accuracy: 0.53
 - Visual Language model - Accuracy: 0.49
+
+| **Model**   | **Basic** | **Advance** | **Visual Language** |
+|-------------|-----------|-------------|---------------------|
+| **Accuracy**| 0.56      | 0.53        | 0.49                |
