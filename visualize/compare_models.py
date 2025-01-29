@@ -39,10 +39,12 @@ def load_model(device):
         n_classes=len(mapping[0]),
         vocab=vocab
     ).to(device)
+    basic_model.load_state_dict(torch.load(osp.join("output", "basic_model.pth")))
 
     advance_model = VQAModelAdvance(
         n_classes=len(mapping[0])
     ).to(device)
+    advance_model.load_state_dict(torch.load(osp.join("output", "advance_model.pth")))
 
     vllm_model = VQAVLLM(device)
 
@@ -81,19 +83,19 @@ def predict(models, input, device):
             img = img.to(device)
             question = question.to(device)
             basic_output = basic_model(img, question)
-            _, predicted = torch.max(basic_output.data, 1)
+            _, basic_output = torch.max(basic_output.data, 1)
     
-    print("Basic Model Prediction:", predicted)
+    basic_output = mapping[2][basic_output.item()]
+    print("Basic Model Prediction:", basic_output)
     
     for img, question, label in advance_loader:
         advance_model.eval()
         with torch.no_grad():
-            img = img.to(device)
-            question = question.to(device)
             advance_output = advance_model(img, question)
-            _, predicted = torch.max(advance_output.data, 1)
-
-    print("Advance Model Prediction:", predicted)
+            _, advance_output = torch.max(advance_output.data, 1)
+    
+    advance_output = mapping[2][advance_output.item()]
+    print("Advance Model Prediction:", advance_output)
 
     vllm_output = vllm_model.predict(input["image_path"], input["question"]).lower()
     print("VLLM Model Prediction:", vllm_output)
@@ -171,18 +173,19 @@ if __name__ == "__main__":
     models = load_model(device)
     model_names = ["Basic", "Advance", "VLLM"]
     
-    random_element = choose_random_element(val_dataset)
-    plot_predictions(random_element, models, model_names, device)
+    while True:
+        random_element = choose_random_element(val_dataset)
+        plot_predictions(random_element, models, model_names, device)
     
-    element_id = 393225001
-    element = find_element_by_id(val_dataset, element_id)
-    if element:
-        plot_predictions(element, models, model_names, device)
-    else:
-        print(f"Element with ID {element_id} not found.")
+    # element_id = 393225001
+    # element = find_element_by_id(val_dataset, element_id)
+    # if element:
+    #     plot_predictions(element, models, model_names, device)
+    # else:
+    #     print(f"Element with ID {element_id} not found.")
 
     
-    num_images = 3
+    # num_images = 3
     
-    random_elements = random.sample(val_dataset, num_images)
-    plot_multiple_predictions(random_elements, models, model_names, device)
+    # random_elements = random.sample(val_dataset, num_images)
+    # plot_multiple_predictions(random_elements, models, model_names, device)
