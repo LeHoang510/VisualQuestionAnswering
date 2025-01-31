@@ -12,6 +12,25 @@ The models are trained using the VQA COCO dataset
 To ensure a comprehensive evaluation, three different models are implemented and their results are compared. 
 This approach helps analyze their effectiveness in understanding images and accurately answering binary questions, as well as evaluating the efficiency of different approaches.
 
+# Model Details
+
+This project is built upon the traditional VQA model (as shown in Figure 3), which consists of three main components:
+
+- **Feature Extraction**: This step involves extracting feature vectors to represent both the textual data (question) and the visual data (image) from the input.
+
+- **Feature Fusion**: The extracted features from both the image and the question are then combined into a single vector, which serves as a unified representation of the input.
+
+- **Answer Classifier**: Based on the fused feature vector, the classifier predicts the true or false answer to the given question.
+
+![Figure1](docs/infor/The-Overall-VQA-Structure.png)
+
+### Basic Model
+- CNN + LSTM 
+### Advance Model
+- ViT + RoBERTa
+### Visual Large Language Model
+- LLava 7B
+
 # Set Up
 
 - Link to the dataset: https://visualqa.org/
