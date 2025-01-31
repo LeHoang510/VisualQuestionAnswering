@@ -2,13 +2,11 @@
 Analyse image and answer the given question by using Computer Vision and Natural Language Processing
 
 - TODO: 
-+ rewrite yaml file
-+ print to see the tensor size of model
-+ write test for all model
 + write readme about the project
-+ train llava model
++ train llava model (In the future)
 
 # Project Description
+
 
 # Folder Structure
 .
