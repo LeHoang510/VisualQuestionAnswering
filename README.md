@@ -6,9 +6,44 @@ Analyse image and answer the given question by using Computer Vision and Natural
 + train llava model (In the future)
 
 # Project Description
+This project focuses on building Visual Question Answering (VQA) models capable of answering yes/no questions based on input images. 
+The models are trained using the VQA COCO dataset
 
+To ensure a comprehensive evaluation, three different models are implemented and their results are compared. 
+This approach helps analyze their effectiveness in understanding images and accurately answering binary questions, as well as evaluating the efficiency of different approaches.
+
+# Set Up
+
+- Link to the dataset: https://visualqa.org/
+- Download the zip file from the website and extract to the folder dataset ([Dataset Structure](#dataset-structure))
+
+- How to run
+    + Run the preprocess_yes_no_dataset.py to get new json files for train/val/test set
+
+        ```python
+        python data_preprocess/preprocess_yes_no_dataset.py
+        ```
+    
+    + Train basic model
+
+        ```python
+        python train/train_basic.py
+        ```
+    
+    + Train advance model
+
+        ```python
+        python train/train_advance.py
+        ```
+    
+    + Evaluate visual large language model
+
+        ```python
+        python train/train_vllm.py
+        ```
 
 # Folder Structure
+```
 .
 ├── app.py
 ├── data_preprocess
@@ -48,8 +83,10 @@ Analyse image and answer the given question by using Computer Vision and Natural
 │   ├── compare_models.py
 │   └── sample_data.py
 └── VQA_project.pdf
+```
 
 # Dataset Structure
+```
 .
 └──  dataset
     ├── generated
@@ -98,6 +135,7 @@ Analyse image and answer the given question by using Computer Vision and Natural
     │   └── v2_OpenEnded_mscoco_val2014_questions.json
     ├── val2014
     └── val2014.zip
+```
 
 # Training results
 - Basic model - Accuracy: 0.56
@@ -109,3 +147,4 @@ Analyse image and answer the given question by using Computer Vision and Natural
 | **Accuracy**| 0.56      | 0.53        | 0.49                |
 
 # Visualization
+
