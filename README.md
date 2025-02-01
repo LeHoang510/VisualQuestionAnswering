@@ -1,67 +1,78 @@
 # VisualQuestionAnswering
-Analyse image and answer the given question by using Computer Vision and Natural Language Processing
 
 - TODO: 
 + write readme about the project
 + train llava model (In the future)
 
-# Project Description
+# Project Overview
 This project focuses on building Visual Question Answering (VQA) models capable of answering yes/no questions based on input images. 
-The models are trained using the VQA COCO dataset
+The models are trained using the VQA COCO dataset and aim to improve understanding of image content through a combination of computer vision (CV) and natural language processing (NLP) techniques.
 
-To ensure a comprehensive evaluation, three different models are implemented and their results are compared. 
-This approach helps analyze their effectiveness in understanding images and accurately answering binary questions, as well as evaluating the efficiency of different approaches.
+To ensure a comprehensive evaluation, three different models are implemented, and their results are compared. 
+This approach helps analyze their effectiveness in understanding images and accurately answering binary questions, as well as evaluating the efficiency of different methodologies.
 
 # Model Details
 
-This project is built upon the traditional VQA model (as shown in Figure 3), which consists of three main components:
+The VQA model follows a traditional structure (as illustrated in Figure 3), which consists of three key components:
 
-- **Feature Extraction**: This step involves extracting feature vectors to represent both the textual data (question) and the visual data (image) from the input.
+- **Feature Extraction**: Extracts feature vectors representing both the textual data (question) and the visual data (image) from the input.
 
-- **Feature Fusion**: The extracted features from both the image and the question are then combined into a single vector, which serves as a unified representation of the input.
+- **Feature Fusion**: Combines the extracted features from both the image and the question into a single vector, forming a unified representation.
 
-- **Answer Classifier**: Based on the fused feature vector, the classifier predicts the true or false answer to the given question.
+- **Answer Classifier**: Predicts the true or false answer based on the fused feature vector.
 
 ![Figure1](docs/infor/The-Overall-VQA-Structure.png)
 
-### Basic Model
-- CNN + LSTM 
-### Advance Model
-- ViT + RoBERTa
-### Visual Large Language Model
-- LLava 7B
+### 1. Basic Model
 
-# Set Up
+- **Image Encoder**: CNN-based feature extractor
+- **Text Encoder**: LSTM for encoding the question
+- **Fusion**: Concatenation of image and text features
+- **Classifier**: Fully connected layers
 
-- Link to the dataset: https://visualqa.org/
-- Download the zip file from the website and extract to the folder dataset ([Dataset Structure](#dataset-structure))
+### 2. Advanced Model
 
-- How to run
-    + Run the preprocess_yes_no_dataset.py to get new json files for train/val/test set
+- **Image Encoder**: ViT (Vision Transformer) - google/vit-base-patch16-224
+- **Text Encoder**: RoBERTa - roberta-base
+- **Fusion**: Concatenation of image and text features
+- **Classifier**: Fully connected layers
 
-        ```python
-        python data_preprocess/preprocess_yes_no_dataset.py
-        ```
-    
-    + Train basic model
+### 3. Visual Large Language Model (LLM-Based VQA)
 
-        ```python
-        python train/train_basic.py
-        ```
-    
-    + Train advance model
+- **Model**: LLaVA-1.5-7B - llava-hf/llava-1.5-7b-hf
 
-        ```python
-        python train/train_advance.py
-        ```
-    
-    + Evaluate visual large language model
+# Dataset
+- The dataset used is from: https://visualqa.org/
+- Download the dataset and extract it to the dataset folder ([Dataset Structure](#dataset-structure))
 
-        ```python
-        python train/train_vllm.py
-        ```
+# How to run
 
-# Folder Structure
+
++ Run the preprocess_yes_no_dataset.py to get new json files for train/val/test set
+
+    ```python
+    python data_preprocess/preprocess_yes_no_dataset.py
+    ```
+
++ Train basic model
+
+    ```python
+    python train/train_basic.py
+    ```
+
++ Train advance model
+
+    ```python
+    python train/train_advance.py
+    ```
+
++ Evaluate visual large language model
+
+    ```python
+    python train/train_vllm.py
+    ```
+# Project Structure
+###  Folder Structure
 ```
 .
 ├── app.py
@@ -104,7 +115,7 @@ This project is built upon the traditional VQA model (as shown in Figure 3), whi
 └── VQA_project.pdf
 ```
 
-# Dataset Structure
+### Dataset Structure
 ```
 .
 └──  dataset
@@ -167,3 +178,9 @@ This project is built upon the traditional VQA model (as shown in Figure 3), whi
 
 # Visualization
 
+
+# Future Work
+
+- Fine-tuning LLaVA 7B on domain-specific datasets
+- Exploring larger vision-language models for improved reasoning
+- Expanding dataset coverage to include open-ended questions
