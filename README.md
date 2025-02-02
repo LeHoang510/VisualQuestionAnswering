@@ -167,7 +167,31 @@ The VQA model follows a traditional structure (as illustrated in Figure 3), whic
     └── val2014.zip
 ```
 
-# Training results
+# Results
+
+## Training progress
+
+- Basic model
+
+    ![Figure1](docs/basic_model/Screenshot%20from%202025-01-23%2011-01-05.png)
+
+- Advance model
+
+    ![Figure1](docs/advance_model/Screenshot%20from%202025-01-26%2014-29-13.png)
+
+- Both
+
+    ![Figure1](docs/advance_model/Screenshot%20from%202025-01-26%2014-29-21.png)
+
+## Training Results
+- Accuracy results
+
+    ![Figure](docs/basic_model/Screenshot%20from%202025-01-23%2011-00-41.png)
+
+    ![Figure](docs/advance_model/Screenshot%20from%202025-01-26%2014-28-48.png)
+
+    ![Figure1](docs/vllm_model/Screenshot%20from%202025-01-23%2023-20-38.png)
+
 - Basic model - Accuracy: 0.56
 - Advance model - Accuracy: 0.53
 - Visual Language model - Accuracy: 0.49
