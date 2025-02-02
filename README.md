@@ -190,7 +190,7 @@ The VQA model follows a traditional structure (as illustrated in Figure 3), whic
 
     ![Figure](docs/advance_model/Screenshot%20from%202025-01-26%2014-28-48.png)
 
-    ![Figure1](docs/vllm_model/Screenshot%20from%202025-01-23%2023-20-38.png)
+    ![Figure](docs/vllm_model/Screenshot%20from%202025-01-23%2023-20-38.png)
 
 - Basic model - Accuracy: 0.56
 - Advance model - Accuracy: 0.53
@@ -200,7 +200,15 @@ The VQA model follows a traditional structure (as illustrated in Figure 3), whic
 |-------------|-----------|-------------|---------------------|
 | **Accuracy**| 0.56      | 0.53        | 0.49                |
 
-# Visualization
+## Results Visualization 
+
+![Figure](docs/results/Figure_1.png)
+![Figure](docs/results/Figure_2.png)
+![Figure](docs/results/Figure_3.png)
+![Figure](docs/results/Figure_4.png)
+![Figure](docs/results/Figure_5.png)
+![Figure](docs/results/Figure_6.png)
+![Figure](docs/results/Figure_7.png)
 
 
 # Future Work
