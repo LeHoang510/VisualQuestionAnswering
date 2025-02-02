@@ -210,6 +210,8 @@ The VQA model follows a traditional structure (as illustrated in Figure 3), whic
 ![Figure](docs/results/Figure_6.png)
 ![Figure](docs/results/Figure_7.png)
 
+# Conclusion
+- TODO
 
 # Future Work
 
