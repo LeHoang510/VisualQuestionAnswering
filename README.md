@@ -211,7 +211,8 @@ The VQA model follows a traditional structure (as illustrated in Figure 3), whic
 ![Figure](docs/results/Figure_7.png)
 
 # Conclusion
-- TODO
+- In this project, three Visual Question Answering (VQA) models were developed and evaluated to answer yes/no questions based on images. 
+Interestingly, the Basic Model, with its simpler architecture using a CNN and LSTM, achieved a competitive accuracy of 0.56, outperforming the more complex Advanced Model (accuracy: 0.53) and the Visual Large Language Model (VLLM) (accuracy: 0.49). While the Advanced Model utilized sophisticated architectures like ViT and RoBERTa, it did not significantly surpass the Basic Model, underscoring the effectiveness of simpler approaches for this task. On the other hand, the VLLM, despite not being fine-tuned or trained specifically for this task, still delivered a reasonable performance, showcasing the robustness and generalization capabilities of large pre-trained visual-language models. These results highlight that while advanced architectures hold potential, simpler models can remain highly effective, and pre-trained models like VLLM can provide strong baselines without additional training.
 
 # Future Work
 
