@@ -71,6 +71,17 @@ The VQA model follows a traditional structure (as illustrated in Figure 3), whic
     ```python
     python train/train_vllm.py
     ```
+
++ Run tensorboard 
+
+    ```bash
+    tensorboard --logdir=output/basic_logs
+    ```
+
+    ```bash
+    tensorboard --logdir=output/advance_logs
+    ```
+
 # Project Structure
 ###  Folder Structure
 ```
