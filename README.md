@@ -50,25 +50,25 @@ The VQA model follows a traditional structure (as illustrated in Figure 3), whic
 
 + Run the preprocess_yes_no_dataset.py to get new json files for train/val/test set
 
-    ```python
+    ```bash
     python data_preprocess/preprocess_yes_no_dataset.py
     ```
 
 + Train basic model
 
-    ```python
+    ```bash
     python train/train_basic.py
     ```
 
 + Train advance model
 
-    ```python
+    ```bash
     python train/train_advance.py
     ```
 
 + Evaluate visual large language model
 
-    ```python
+    ```bash
     python train/train_vllm.py
     ```
 
